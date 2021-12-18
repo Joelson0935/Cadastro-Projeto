@@ -6,9 +6,35 @@
 <!-- O Arquivo jquery tem que sempre estar acima do bootstrap para que os mesmos funcione em conjunto. -->
 <script type="text/javascript" src="js/jquery-3.6.0.min.js"></script>
 <script type="text/javascript" src="js/bootstrap.min.js"></script>
+<script type="text/javascript" src="js/jquery.validate.min.js"></script>
+<script type="text/javascript" src="js/localization/messages_pt_BR.js"></script>
+<script type="text/javascript" src="js/additional-methods.min.js"></script>
 <link href="css/bootstrap.min.css" rel="stylesheet" type="text/css">
 <link rel="stylesheet" type="text/css" href="estilo.css">
 <title>Formulário de Cadastro</title>
+<script type="text/javascript">
+	$(document).ready(function() {
+		$('#form').validate({
+			rules : {
+				nome : {
+					required : true,
+					maxlength : 60,
+					minlength : 4
+				},
+				idade: {
+					required: true,
+					min: 1,
+					max: 110
+				},
+				senha: {
+					required: true,
+					minlength: 8,
+					maxlength: 20
+				}
+			}
+		})
+	})
+</script>
 </head>
 <body>
 
@@ -17,19 +43,19 @@
 	<form id="form">
 		<div class="mb-3">
 			<label for="id" class="form-label">Id </label> <input type="text"
-				class="form-control" id="id" readonly="readonly">
+				name="id" class="form-control" id="id" readonly="readonly">
 		</div>
 		<div class="mb-3">
 			<label for="nome" class="form-label">Nome</label> <input type="text"
-				class="form-control" id="nome">
+				name="nome" class="form-control" id="nome">
 		</div>
 		<div class="mb-3">
 			<label for="idade" class="form-label">Idade</label> <input
-				type="text" class="form-control" id="idade">
+				name="idade" type="text" class="form-control" id="idade">
 		</div>
 		<div class="mb-3">
 			<label for="senha" class="form-label">Senha</label> <input
-				type="password" class="form-control" id="senha">
+				name="senha" type="password" class="form-control" id="senha">
 		</div>
 		<button type="button" class="btn btn-primary"
 			onclick="salvarCadastro()">Salvar</button>
@@ -246,26 +272,29 @@
 
 		/* MÉTODO APESENTA DEFEITO, TRÁS OS DADOS PARA O CONSOLE MAS NÃO CARREGA NO MODAL */
 		function buscarTodos() {
-			$.ajax(
-					{
-						method : "GET",
-						url : "/Cadastro/Cadastros/Tudo",
-						success : function(response) {
-							console.log(response);
-							for (let i = 0; i < response.length; i++) {
-								$('#tbDados > tbody').append(
-										'<tr><td>' + response[i].id
-												+ '</td><td style="text-align: center;">'
-												+ response[i].nome
-												+ '</td><td>'
-												+ response[i].idade
-												+ '</td></tr>')
-							}
-						}
-					}).fail(function(xhr, status, errorThrown) {
-				alert("Algo deu errado! " + xhr.responseText);
-				document.getElementById('form').reset();
-			});
+			$
+					.ajax(
+							{
+								method : "GET",
+								url : "/Cadastro/Cadastros/Tudo",
+								success : function(response) {
+									console.log(response);
+									for (let i = 0; i < response.length; i++) {
+										$('#tbDados > tbody')
+												.append(
+														'<tr><td>'
+																+ response[i].id
+																+ '</td><td style="text-align: center;">'
+																+ response[i].nome
+																+ '</td><td>'
+																+ response[i].idade
+																+ '</td></tr>')
+									}
+								}
+							}).fail(function(xhr, status, errorThrown) {
+						alert("Algo deu errado! " + xhr.responseText);
+						document.getElementById('form').reset();
+					});
 		}
 	</script>
 

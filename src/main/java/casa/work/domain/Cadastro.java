@@ -18,7 +18,7 @@ public class Cadastro implements Serializable {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	@NotBlank(message = "branco ou nulo não são aceitos")
-	@Size(min = 3, message = "mínimo de 3 caracteres")
+	@Size(min = 4, message = "mínimo de 3 caracteres")
 	private String nome;
 	
 	private Integer idade;
