@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- O Arquivo jquery tem que sempre estar acima do bootstrap para que os mesmos funcione em conjunto. -->
+<script type="text/javascript" src="js/jquery-3.6.0.min.js"></script>
+<script type="text/javascript" src="js/bootstrap.min.js"></script>
+<script type="text/javascript" src="js/jquery.validate.min.js"></script>
+<script type="text/javascript" src="js/localization/messages_pt_BR.js"></script>
+<script type="text/javascript" src="js/additional-methods.min.js"></script>
+<link href="css/bootstrap.min.css" rel="stylesheet" type="text/css">
+<link rel="stylesheet" type="text/css" href="estilo.css">
+<title>Formulário de Cadastro</title>
+<script type="text/javascript">
+	$(document).ready(function() {
+		$('#form').validate({
+			rules : {
+				nome : {
+					required : true,
+					maxlength : 60,
+					minlength : 4
+				},
+				idade: {
+					required: true,
+					min: 1,
+					max: 110
+				},
+				senha: {
+					required: true,
+					minlength: 8,
+					maxlength: 20
+				}
+			}
+		})
+	})
+</script>
+</head>
+<body>
+
+	<h1>Cadastro de Clientes</h1>
+
+	<form id="form">
+		<div class="mb-3">
+			<label for="id" class="form-label">Id </label> <input type="text"
+				name="id" class="form-control" id="id" readonly="readonly">
+		</div>
+		<div class="mb-3">
+			<label for="nome" class="form-label">Nome</label> <input type="text"
+				name="nome" class="form-control" id="nome">
+		</div>
+		<div class="mb-3">
+			<label for="idade" class="form-label">Idade</label> <input
+				name="idade" type="text" class="form-control" id="idade">
+		</div>
+		<div class="mb-3">
+			<label for="senha" class="form-label">Senha</label> <input
+				name="senha" type="password" class="form-control" id="senha">
+		</div>
+		<button type="button" class="btn btn-primary"
+			onclick="salvarCadastro()">Salvar</button>
+		<button type="button" class="btn btn-primary"
+			onclick="atualizaCadastro()">Atualizar</button>
+		<button type="button" id="buttonPesquisa" class="btn btn-primary"
+			data-bs-toggle="modal" data-bs-target="#exampleModal">Pesquisar</button>
+		<button type="button" class="btn btn-primary" data-bs-toggle="modal"
+			data-bs-target="#modalTodos">Listar</button>
+	</form>
+
+
+
+	<!-- Modal -->
+	<div class="modal fade" id="exampleModal" tabindex="-1"
+		aria-labelledby="exampleModalLabel" aria-hidden="true">
+		<div class="modal-dialog" id="dialogo">
+			<div class="modal-content" style="width: 500px">
+				<div class="modal-header" id="modalTopo">
+
+					<h5 class="modal-title" id="exampleModalLabel"
+						style="text-align: left; width: 50%; margin-left: 25%; margin-right: 25%;">Pesquisar
+						Cadastros</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal"
+						aria-label="Close" style="float: right;"></button>
+					<input type="text" id="buscaNome" style="margin-left: 20%;">
+					<button type="button" class="btn btn-primary" onclick="buscar()">OK</button>
+
+				</div>
+				<div class="modal-body"></div>
+				<div id="bodyTabela">
+					<table class="table" id="tabela">
+						<thead>
+							<tr>
+								<th scope="col">Id</th>
+								<th scope="col" style="text-align: center;">Nome</th>
+								<th scope="col">Idade</th>
+								<th scope="col">Editar</th>
+								<th scope="col">Apagar</th>
+							</tr>
+						</thead>
+						<tbody>
+
+						</tbody>
+					</table>
+				</div>
+				<div class="modal-footer"></div>
+			</div>
+		</div>
+	</div>
+
+	<div class="modal fade" id="modalTodos" tabindex="-1"
+		aria-labelledby="exampleModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header" id="listaTopo">
+					<h5 class="modal-title" style="width: 50%; margin-left: 25%;">Lista
+						dos Registros</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal"
+						aria-label="Close" style="float: right;"></button>
+				</div>
+				<div class="modal-body" id="body">
+
+					<table id="tbDados">
+						<thead>
+							<tr>
+								<th>Id</th>
+								<th style="text-align: center;">Nome</th>
+								<th>Idade</th>
+								<th><button type="button" class="btn btn-primary"
+										onclick="buscarTodos()" style="margin-top: 0px; float: right;">Buscar</button></th>
+							</tr>
+						</thead>
+						<tbody>
+
+						</tbody>
+					</table>
+				</div>
+				<div class="modal-footer" id="footer"></div>
+			</div>
+		</div>
+	</div>
+
+
+
+	<!-- http://localhost:8081/Cadastro/ -->
+
+	<script type="text/javascript">
+		function salvarCadastro() {
+			const id = $("#id").val();
+			const nome = $("#nome").val();
+			const idade = $("#idade").val();
+			const senha = $("#senha").val();
+
+			$.ajax({
+				method : "POST",
+				url : "/Cadastro/Cadastros",
+				data : JSON.stringify({
+					id : id,
+					nome : nome,
+					idade : idade,
+					senha : senha
+				}),
+				contentType : "application/json; charset=utf-8",
+				success : function(response) {
+					$("#id").val(response.id);
+					alert("salvo com sucesso !");
+					document.getElementById('form').reset();
+				}
+			}).fail(function(xhr, status, errorThrown) {
+				alert("Algo deu errado! " + xhr.responseText);
+				document.getElementById('form').reset();
+			});
+		}
+
+		function buscar() {
+			let nome = $("#buscaNome").val();
+			if (nome != null && nome != '') {
+				$
+						.ajax(
+								{
+									method : "GET",
+									url : "/Cadastro/Cadastros/Nomes",
+									data : "nome=" + nome,
+									contentType : "application/json; charset=utf-8",
+									success : function(response) {
+										$('#tabela > tbody > tr').remove();
+										for (let i = 0; i < response.length; i++) {
+											$('#tabela > tbody')
+													.append(
+															'<tr id="'+response[i].id+'"><td>'
+																	+ response[i].id
+																	+ '</td><td>'
+																	+ response[i].nome
+																	+ '</td><td>'
+																	+ response[i].idade
+																	+ '</td><td><button type="button" class="btn btn-primary" onclick="editar('
+																	+ response[i].id
+																	+ ')">Editar</button></td><td><button type="button" class="btn btn-danger" onclick="apagar('
+																	+ response[i].id
+																	+ ')">Apagar</button></td></tr>');
+										}
+										document.getElementById('form').reset();
+									}
+								}).fail(function(xhr, status, errorThrown) {
+							alert("Algo deu errado! " + xhr.responseText);
+							document.getElementById('form').reset();
+						});
+			}
+		}
+
+		function editar(id) {
+
+			$.ajax({
+				method : "GET",
+				url : "/Cadastro/Cadastros/id",
+				data : "id=" + id,
+				success : function(response) {
+					$("#id").val(response.id);
+					$("#nome").val(response.nome);
+					$("#idade").val(response.idade);
+					$("#senha").val(response.senha);
+					$("#exampleModal").modal('hide');
+				}
+			}).fail(function(xhr, status, errorThrown) {
+				alert("Algo deu errado! " + xhr.responseText);
+				document.getElementById('form').reset();
+			});
+		}
+
+		function atualizaCadastro(id) {
+
+			id = $("#id").val();
+			const nome = $("#nome").val();
+			const idade = $("#idade").val();
+			const senha = $("#senha").val();
+
+			$.ajax({
+				method : "PUT",
+				url : "/Cadastro/Cadastros/Atualizar/" + id,
+				data : JSON.stringify({
+					id : id,
+					nome : nome,
+					idade : idade,
+					senha : senha
+				}),
+				contentType : "application/json; charset=utf-8",
+				success : function(response) {
+					alert("salvo com sucesso !");
+					document.getElementById('form').reset();
+				}
+			}).fail(function(xhr, status, errorThrown) {
+				alert("Algo deu errado! " + xhr.responseText);
+				document.getElementById('form').reset();
+			});
+		}
+
+		function apagar(id) {
+			if (confirm("Deseja realmente apagar estes dados ?")) {
+				$.ajax({
+					method : "DELETE",
+					url : "/Cadastro/Cadastros/Delete",
+					data : "deleteId=" + id,
+					success : function(response) {
+						$('#' + id).remove();
+						alert("Deletado com sucesso!");
+					}
+				}).fail(function(xhr, status, errorThrown) {
+					alert("Algo deu errado! " + xhr.responseText);
+					document.getElementById('form').reset();
+				});
+			}
+		}
+
+		/* MÉTODO APESENTA DEFEITO, TRÁS OS DADOS PARA O CONSOLE MAS NÃO CARREGA NO MODAL */
+		function buscarTodos() {
+			$
+					.ajax(
+							{
+								method : "GET",
+								url : "/Cadastro/Cadastros/Tudo",
+								success : function(response) {
+									console.log(response);
+									for (let i = 0; i < response.length; i++) {
+										$('#tbDados > tbody')
+												.append(
+														'<tr><td>'
+																+ response[i].id
+																+ '</td><td style="text-align: center;">'
+																+ response[i].nome
+																+ '</td><td>'
+																+ response[i].idade
+																+ '</td></tr>')
+									}
+								}
+							}).fail(function(xhr, status, errorThrown) {
+						alert("Algo deu errado! " + xhr.responseText);
+						document.getElementById('form').reset();
+					});
+		}
+	</script>
+
+</body>
+</html>
