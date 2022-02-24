@@ -21,15 +21,15 @@
 					maxlength : 60,
 					minlength : 4
 				},
-				idade: {
-					required: true,
-					min: 1,
-					max: 110
+				idade : {
+					required : true,
+					min : 1,
+					max : 110
 				},
-				senha: {
-					required: true,
-					minlength: 8,
-					maxlength: 20
+				senha : {
+					required : true,
+					minlength : 8,
+					maxlength : 20
 				}
 			}
 		})
@@ -115,16 +115,16 @@
 					<h5 class="modal-title" style="width: 50%; margin-left: 25%;">Lista
 						dos Registros</h5>
 					<button type="button" class="btn-close" data-bs-dismiss="modal"
-						aria-label="Close" style="float: right;"></button>
+						aria-label="Close" style="float: right;" onclick="limparLista()"></button>
 				</div>
 				<div class="modal-body" id="body">
 
 					<table id="tbDados">
 						<thead>
 							<tr>
-								<th>Id</th>
-								<th style="text-align: center;">Nome</th>
-								<th>Idade</th>
+								<th class="th">Id</th>
+								<th style="text-align: center;" class="th">Nome</th>
+								<th class="th">Idade</th>
 								<th><button type="button" class="btn btn-primary"
 										onclick="buscarTodos()" style="margin-top: 0px; float: right;">Buscar</button></th>
 							</tr>
@@ -144,6 +144,11 @@
 	<!-- http://localhost:8081/Cadastro/ -->
 
 	<script type="text/javascript">
+	
+		function limparLista(){
+			$('#tbDados > tbody > tr').remove();
+		}
+
 		function salvarCadastro() {
 			const id = $("#id").val();
 			const nome = $("#nome").val();
@@ -270,7 +275,6 @@
 			}
 		}
 
-		/* MÉTODO APESENTA DEFEITO, TRÁS OS DADOS PARA O CONSOLE MAS NÃO CARREGA NO MODAL */
 		function buscarTodos() {
 			$
 					.ajax(
